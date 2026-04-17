@@ -630,50 +630,7 @@ _(Pesan ini dikirim melalui website sriwijayatransindo.com)_`;
     // ============================================
 
     // --- 17. LANGUAGE SWITCHING ---
-    const translations = {
-        'id': {
-            'nav-home': 'Beranda', 'nav-about': 'Tentang', 'nav-services': 'Layanan', 
-            'nav-why-us': 'Keunggulan', 'nav-portfolio': 'Portofolio', 'nav-news': 'Berita',
-            'nav-contact': 'Hubungi Kami'
-        },
-        'en': {
-            'nav-home': 'Home', 'nav-about': 'About', 'nav-services': 'Services', 
-            'nav-why-us': 'Advantages', 'nav-portfolio': 'Portfolio', 'nav-news': 'News',
-            'nav-contact': 'Contact Us'
-        }
-    };
-
-    const langBtns = document.querySelectorAll('.lang-btn');
-    
-    function setLanguage(lang) {
-        localStorage.setItem('lang', lang);
-        langBtns.forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-lang') === lang));
-        
-        // Update elements with data-i18n attribute
-        // In a real app we'd tag elements, here I'll target main ones manually or by mapping
-        const mapping = {
-            '#nav-links li:nth-child(1) a': 'nav-home',
-            '#nav-links li:nth-child(2) a': 'nav-about',
-            '#nav-links li:nth-child(3) a': 'nav-services',
-            '#nav-links li:nth-child(4) a': 'nav-why-us',
-            '#nav-links li:nth-child(5) a': 'nav-portfolio',
-            '#nav-links li:nth-child(6) a': 'nav-news',
-            '#nav-links li:nth-child(7) a': 'nav-contact'
-        };
-
-        for (let selector in mapping) {
-            const el = document.querySelector(selector);
-            if (el) el.innerHTML = translations[lang][mapping[selector]];
-        }
-    }
-
-    langBtns.forEach(btn => {
-        btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
-    });
-
-    // Check saved language
-    const savedLang = localStorage.getItem('lang') || 'id';
-    setLanguage(savedLang);
+    // Multi-bahasa dinonaktifkan
 
     // --- 18. MOCK CARGO TRACKING ---
     const trackBtn = document.getElementById('btn-track');
