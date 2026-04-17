@@ -3425,21 +3425,18 @@ ul {
     .bento-grid {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
-        gap: 1rem;
+        gap: 1.5rem;
+    }
+
+    .bento-large,
+    .bento-medium,
+    .bento-small {
+        grid-column: span 1;
+        grid-row: auto;
     }
 
     .bento-large {
         grid-column: 1 / -1;
-        grid-row: 1 / 2;
-    }
-
-    .bento-medium {
-        grid-column: span 1;
-    }
-
-    .bento-small {
-        grid-column: span 1;
-        grid-row: span 1;
     }
 }
 
@@ -3488,13 +3485,16 @@ ul {
 
     .bento-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-rows: auto;
+        gap: 1.5rem;
     }
 
     .bento-large,
     .bento-medium,
     .bento-small {
         grid-column: 1 / -1;
+        grid-row: auto;
+        min-height: 350px;
     }
 
     .bento-content {
