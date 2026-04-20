@@ -3453,7 +3453,19 @@ ul {
 
 @media (max-width: 992px) {
     .navbar {
-        padding: 15px 0;
+        padding: 12px 0;
+    }
+
+    .navbar.scrolled {
+        padding: 8px 0;
+    }
+
+    .logo-img {
+        height: 40px;
+    }
+
+    .navbar.scrolled .logo-img {
+        height: 35px;
     }
 
     .nav-toggle {
@@ -3984,7 +3996,10 @@ ul {
 
 @media (max-width: 768px) {
     .hero {
-        height: 90vh;
+        min-height: 100vh;
+        height: auto;
+        padding-top: 120px;
+        padding-bottom: 60px;
     }
 
     .hero-headline {
@@ -3997,16 +4012,25 @@ ul {
     }
 
     .hero-features {
-        flex-direction: column;
-        gap: 1.25rem;
-        align-items: center;
-        margin-bottom: 2.5rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.8rem;
+        margin-bottom: 2rem;
     }
 
     .hero-cta {
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 1rem;
         align-items: center;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+    
+    .hero-cta .btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .facilities-grid {
