@@ -338,17 +338,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 6. WHATSAPP CONTACT FORM ---
+    // --- 6. WHATSAPP CONTACT FORM + AJAX LEAD SAVE ---
     const waForm = document.getElementById('wa-contact-form');
     if (waForm) {
-        waForm.addEventListener('submit', function(e) {
+        waForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const name = document.getElementById('wa-name').value.trim();
             const email = document.getElementById('wa-email').value.trim();
             const subject = document.getElementById('wa-subject').value.trim();
             const message = document.getElementById('wa-message').value.trim();
+            const csrfToken = document.getElementById('csrf_token')?.value || '';
+            const submitBtn = document.getElementById('btn-submit-contact');
+            const notification = document.getElementById('form-notification');
 
+            // Client-side validation
+            if (!name || !email || !subject || !message) {
+                showFormNotification('Semua field harus diisi.', 'error');
+                return;
+            }
+            if (message.length < 10) {
+                showFormNotification('Pesan minimal 10 karakter.', 'error');
+                return;
+            }
+
+            // Loading state
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            submitBtn.disabled = true;
+
+            // Compose WhatsApp message
             const waMessage =
 `Halo, saya ingin menghubungi PT. Sriwijaya Trans Indo.
 
@@ -362,9 +381,82 @@ ${message}
 _(Pesan ini dikirim melalui website sriwijayatransindo.com)_`;
 
             const waNumber = '6282115564972';
-            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`, '_blank');
-            waForm.reset();
+            const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+
+            // Try to save lead to database via AJAX
+            try {
+                const response = await fetch('api/submit_lead.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        service: subject,
+                        message: message,
+                        whatsapp_sent: 1,
+                        csrf_token: csrfToken,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showFormNotification('✓ Pesan berhasil disimpan! Mengarahkan ke WhatsApp...', 'success');
+                    // Delay redirect to show success message
+                    setTimeout(() => {
+                        window.open(waUrl, '_blank');
+                        waForm.reset();
+                    }, 800);
+                } else {
+                    // Show validation errors
+                    const errorMsg = data.errors ? data.errors.join(', ') : (data.message || 'Gagal menyimpan data.');
+                    showFormNotification(errorMsg, 'error');
+                    // Still redirect to WhatsApp as fallback
+                    setTimeout(() => window.open(waUrl, '_blank'), 1500);
+                }
+
+            } catch (err) {
+                // Server unreachable — fallback to WhatsApp only
+                console.warn('API unavailable, fallback to WhatsApp only:', err);
+                window.open(waUrl, '_blank');
+                waForm.reset();
+            }
+
+            // Reset button
+            setTimeout(() => {
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            }, 2000);
         });
+    }
+
+    /**
+     * Show inline form notification
+     */
+    function showFormNotification(message, type) {
+        const el = document.getElementById('form-notification');
+        if (!el) return;
+
+        el.style.display = 'block';
+        el.textContent = message;
+
+        if (type === 'success') {
+            el.style.background = 'rgba(34,197,94,0.1)';
+            el.style.color = '#22c55e';
+            el.style.border = '1px solid rgba(34,197,94,0.3)';
+        } else {
+            el.style.background = 'rgba(239,68,68,0.1)';
+            el.style.color = '#ef4444';
+            el.style.border = '1px solid rgba(239,68,68,0.3)';
+        }
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            el.style.display = 'none';
+        }, 5000);
     }
 
     // --- 7. DARK MODE TOGGLE ---
